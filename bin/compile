@@ -1,0 +1,96 @@
+#!/bin/sh
+
+set -e
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+BP_DIR=`cd $(dirname $0); cd ..; pwd`
+
+error() {
+	echo " !     $*" >&2
+	exit 1
+}
+
+topic() {
+	echo "-----> $*"
+}
+
+install_system_deps() {
+	topic "Installing System Dependencies"
+
+	APT_BUILDPACK="https://github.com/heroku/heroku-buildpack-apt"
+	local buildpack_tmpdir=$(mktemp -d)
+	cd $buildpack_tmpdir && git clone $APT_BUILDPACK .
+
+	local build_tmpdir=$(mktemp -d)
+	mkdir -p $build_tmpdir
+	cat << EOF >$build_tmpdir/Aptfile
+# WebKit dependencies
+#libwoff1
+#libopus0
+#libwebp6
+#libwebpdemux2
+#libenchant1c2a
+#libgudev-1.0-0
+#libsecret-1-0
+#libhyphen0
+libgdk-pixbuf2.0-0
+#libegl1
+libnotify4
+#libxslt1.1
+#libevent-2.1-6
+#libgles2
+#libvpx5
+# gstreamer and plugins to support video playback in WebKit
+#gstreamer1.0-gl
+#gstreamer1.0-plugins-base
+#gstreamer1.0-plugins-good
+#gstreamer1.0-plugins-bad
+# Chromium dependencies
+libnss3
+libxss1
+libasound2
+fonts-noto-color-emoji
+libcairo-gobject2
+# Firefox dependencies
+libdbus-glib-1-2
+libxt6
+libsm6
+libice6
+# FFmpeg to bring in audio and video codecs necessary for playing videos in Firefox
+ffmpeg
+# (Optional) XVFB if there's a need to run browsers in headful mode
+xvfb
+EOF
+
+	local cache_tmpdir=$(mktemp -d)
+
+	HOME=/app $buildpack_tmpdir/bin/compile $build_tmpdir $cache_tmpdir
+	if [ $? -ne 0 ]; then
+		rm -rf $buildpack_tmpdir $build_tmpdir $cache_tmpdir
+		error "Could not install dependencies"
+	fi
+	mv $build_tmpdir/.apt $BUILD_DIR
+	# mv file in case user is using .profile.d
+	mkdir -p $BUILD_DIR/.profile.d/
+	mv $build_tmpdir/.profile.d/000_apt.sh $BUILD_DIR/.profile.d/
+
+	rm -rf $buildpack_tmpdir $build_tmpdir $cache_tmpdir
+}
+
+configure_export_env() {
+    topic "Writing profile script"
+    mkdir -p $BUILD_DIR/.profile.d
+    cat << EOF >$BUILD_DIR/.profile.d/001_playwright.sh
+export PLAYWRIGHT_BROWSERS_PATH=0
+EOF
+
+    # Give environment variable to other buildpacks
+    echo "export PLAYWRIGHT_BROWSERS_PATH=0" >> "$BP_DIR/export"
+
+    export PLAYWRIGHT_BROWSERS_PATH=0
+}
+
+install_system_deps
+configure_export_env
