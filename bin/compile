@@ -36,6 +36,7 @@ libnss3
 libxss1
 libasound2
 fonts-noto-color-emoji
+libgbm1
 EOF
 	fi
 
