@@ -28,7 +28,7 @@ install_system_deps() {
 
 	SUPPORTED_BROWSERS=${PLAYWRIGHT_BUILDPACK_BROWSERS:-chromium,firefox,webkit}
 
-	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
+	if grep -q "chromium" <<< "$SUPPORTED_BROWSERS"; then
 		echo "Recognized Chromium in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
 			cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
@@ -41,7 +41,7 @@ libcairo-gobject2
 EOF
 	fi
 
-	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
+	if grep -q "firefox" <<< "$SUPPORTED_BROWSERS"; then
 		echo "Recognized WebKit in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
 			cat << EOF >>$build_tmpdir/Aptfile
 # Firefox dependencies
