@@ -32,7 +32,6 @@ install_system_deps() {
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
-libnotify4
 libnss3
 libxss1
 libasound2
@@ -55,6 +54,7 @@ EOF
 
 	cat << EOF >>$build_tmpdir/Aptfile
 # Needed by Firefox and Chromium
+libnotify4
 libgdk-pixbuf2.0-0
 # (Optional) XVFB if there's a need to run browsers in headful mode
 xvfb
