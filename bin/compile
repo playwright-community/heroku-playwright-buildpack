@@ -25,34 +25,25 @@ install_system_deps() {
 
 	local build_tmpdir=$(mktemp -d)
 	mkdir -p $build_tmpdir
-	cat << EOF >$build_tmpdir/Aptfile
-# WebKit dependencies
-#libwoff1
-#libopus0
-#libwebp6
-#libwebpdemux2
-#libenchant1c2a
-#libgudev-1.0-0
-#libsecret-1-0
-#libhyphen0
-libgdk-pixbuf2.0-0
-#libegl1
-libnotify4
-#libxslt1.1
-#libevent-2.1-6
-#libgles2
-#libvpx5
-# gstreamer and plugins to support video playback in WebKit
-#gstreamer1.0-gl
-#gstreamer1.0-plugins-base
-#gstreamer1.0-plugins-good
-#gstreamer1.0-plugins-bad
+
+	SUPPORTED_BROWSERS=${PLAYWRIGHT_BUILDPACK_BROWSERS:-chromium,firefox,webkit}
+
+	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
+		echo "Recognized Chromium in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
+			cat << EOF >>Aptfile
 # Chromium dependencies
+libnotify4
 libnss3
 libxss1
 libasound2
 fonts-noto-color-emoji
 libcairo-gobject2
+EOF
+	fi
+
+	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
+		echo "Recognized WebKit in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
+			cat << EOF >>Aptfile
 # Firefox dependencies
 libdbus-glib-1-2
 libxt6
@@ -60,6 +51,12 @@ libsm6
 libice6
 # FFmpeg to bring in audio and video codecs necessary for playing videos in Firefox
 ffmpeg
+EOF
+	fi
+
+	cat << EOF >>Aptfile
+# Needed by Firefox and Chromium
+libgdk-pixbuf2.0-0
 # (Optional) XVFB if there's a need to run browsers in headful mode
 xvfb
 EOF
