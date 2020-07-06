@@ -36,7 +36,6 @@ libnss3
 libxss1
 libasound2
 fonts-noto-color-emoji
-libcairo-gobject2
 EOF
 	fi
 
@@ -52,10 +51,16 @@ ffmpeg
 EOF
 	fi
 
-	cat << EOF >>$build_tmpdir/Aptfile
+	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* || "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
+		cat << EOF >>$build_tmpdir/Aptfile
 # Needed by Firefox and Chromium
 libnotify4
 libgdk-pixbuf2.0-0
+libcairo-gobject2
+EOF
+	fi
+
+	cat << EOF >>$build_tmpdir/Aptfile
 # (Optional) XVFB if there's a need to run browsers in headful mode
 xvfb
 EOF
