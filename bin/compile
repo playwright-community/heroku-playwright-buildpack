@@ -30,7 +30,7 @@ install_system_deps() {
 
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		echo "Recognized Chromium in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
-			cat << EOF >>Aptfile
+			cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
 libnotify4
 libnss3
@@ -43,7 +43,7 @@ EOF
 
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
 		echo "Recognized WebKit in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
-			cat << EOF >>Aptfile
+			cat << EOF >>$build_tmpdir/Aptfile
 # Firefox dependencies
 libdbus-glib-1-2
 libxt6
@@ -54,7 +54,7 @@ ffmpeg
 EOF
 	fi
 
-	cat << EOF >>Aptfile
+	cat << EOF >>$build_tmpdir/Aptfile
 # Needed by Firefox and Chromium
 libgdk-pixbuf2.0-0
 # (Optional) XVFB if there's a need to run browsers in headful mode
