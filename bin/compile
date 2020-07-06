@@ -47,8 +47,6 @@ libdbus-glib-1-2
 libxt6
 libsm6
 libice6
-# FFmpeg to bring in audio and video codecs necessary for playing videos in Firefox
-ffmpeg
 EOF
 	fi
 
