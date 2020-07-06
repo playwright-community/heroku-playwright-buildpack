@@ -27,10 +27,10 @@ install_system_deps() {
 	mkdir -p $build_tmpdir
 
 	SUPPORTED_BROWSERS=${PLAYWRIGHT_BUILDPACK_BROWSERS:-chromium,firefox,webkit}
+	echo "Installing Playwright dependencies (env: PLAYWRIGHT_BUILDPACK_BROWSERS) for $SUPPORTED_BROWSERS."
 
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
-		echo "Recognized Chromium in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
-			cat << EOF >>$build_tmpdir/Aptfile
+		cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
 libnotify4
 libnss3
@@ -42,8 +42,7 @@ EOF
 	fi
 
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
-		echo "Recognized WebKit in environment variable PLAYWRIGHT_BUILDPACK_BROWSERS."
-			cat << EOF >>$build_tmpdir/Aptfile
+		cat << EOF >>$build_tmpdir/Aptfile
 # Firefox dependencies
 libdbus-glib-1-2
 libxt6
