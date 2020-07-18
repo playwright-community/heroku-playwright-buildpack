@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 set -e
 
@@ -25,42 +25,41 @@ install_system_deps() {
 
 	local build_tmpdir=$(mktemp -d)
 	mkdir -p $build_tmpdir
-	cat << EOF >$build_tmpdir/Aptfile
-# WebKit dependencies
-libwoff1
-libopus0
-libwebp6
-libwebpdemux2
-libenchant1c2a
-libgudev-1.0-0
-libsecret-1-0
-libhyphen0
-libegl1
-libxslt1.1
-libevent-2.1-6
-libgles2
-libvpx5
-# gstreamer and plugins to support video playback in WebKit
-gstreamer1.0-gl
-gstreamer1.0-plugins-base
-gstreamer1.0-plugins-good
-gstreamer1.0-plugins-bad
-# needed by ff or cr
-libgdk-pixbuf2.0-0
-libnotify4
+
+	SUPPORTED_BROWSERS=${PLAYWRIGHT_BUILDPACK_BROWSERS:-chromium,firefox,webkit}
+	echo "Installing Playwright dependencies (env: PLAYWRIGHT_BUILDPACK_BROWSERS) for $SUPPORTED_BROWSERS."
+
+	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
+		cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
 libnss3
 libxss1
 libasound2
 fonts-noto-color-emoji
-libcairo-gobject2
+libgbm1
+EOF
+	fi
+
+	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
+		cat << EOF >>$build_tmpdir/Aptfile
 # Firefox dependencies
 libdbus-glib-1-2
 libxt6
 libsm6
 libice6
-# FFmpeg to bring in audio and video codecs necessary for playing videos in Firefox
-ffmpeg
+EOF
+	fi
+
+	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* || "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
+		cat << EOF >>$build_tmpdir/Aptfile
+# Needed by Firefox and Chromium
+libnotify4
+libgdk-pixbuf2.0-0
+libcairo-gobject2
+EOF
+	fi
+
+	cat << EOF >>$build_tmpdir/Aptfile
 # (Optional) XVFB if there's a need to run browsers in headful mode
 xvfb
 EOF
@@ -93,5 +92,20 @@ EOF
     export PLAYWRIGHT_BROWSERS_PATH=0
 }
 
+# See here as a reference: https://devcenter.heroku.com/articles/buildpack-api#bin-compile
+export_env_dir() {
+  env_dir=$1
+  acceptlist_regex=${2:-''}
+  denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+  if [ -d "$env_dir" ]; then
+    for e in $(ls $env_dir); do
+      echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" &&
+      export "$e=$(cat $env_dir/$e)"
+      :
+    done
+  fi
+}
+
+export_env_dir "$ENV_DIR" PLAYWRIGHT_BUILDPACK_BROWSERS
 install_system_deps
 configure_export_env
