@@ -31,7 +31,6 @@ install_system_deps() {
 
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
-# Chromium dependencies
 libnss3
 libxss1
 libasound2
@@ -42,11 +41,39 @@ EOF
 
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
-# Firefox dependencies
 libdbus-glib-1-2
 libxt6
 libsm6
 libice6
+EOF
+	fi
+
+	if [[ "$SUPPORTED_BROWSERS" == *"webkit"* ]]; then
+		cat << EOF >>$build_tmpdir/Aptfile
+libwoff1
+libopus0
+libwebp6
+libwebpdemux2
+libenchant1c2a
+libgudev-1.0-0
+libsecret-1-0
+libhyphen0
+libgdk-pixbuf2.0-0
+libegl1
+libnotify4
+libxslt1.1
+libevent-2.1-6
+libgles2
+libvpx5
+libxcomposite1
+libatk1.0-0
+libatk-bridge2.0-0
+libepoxy0
+libgtk-3-0
+libharfbuzz-icu0
+libgstreamer-gl1.0-0
+libgstreamer-plugins-bad1.0-0
+gstreamer1.0-plugins-good
 EOF
 	fi
 
