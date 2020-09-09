@@ -62,6 +62,8 @@ EOF
 	cat << EOF >>$build_tmpdir/Aptfile
 # (Optional) XVFB if there's a need to run browsers in headful mode
 xvfb
+# Recording
+ffmpeg
 EOF
 
 	local cache_tmpdir=$(mktemp -d)
