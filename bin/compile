@@ -37,6 +37,12 @@ libxss1
 libasound2
 fonts-noto-color-emoji
 libgbm1
+# Recording
+ffmpeg
+# needed by ffmpeg
+libvpx5
+libpulse0
+libusb-1.0-0
 EOF
 	fi
 
@@ -62,8 +68,6 @@ EOF
 	cat << EOF >>$build_tmpdir/Aptfile
 # (Optional) XVFB if there's a need to run browsers in headful mode
 xvfb
-# Recording
-ffmpeg
 EOF
 
 	local cache_tmpdir=$(mktemp -d)
@@ -86,11 +90,12 @@ configure_export_env() {
     mkdir -p $BUILD_DIR/.profile.d
     cat << EOF >$BUILD_DIR/.profile.d/001_playwright.sh
 export PLAYWRIGHT_BROWSERS_PATH=0
+# They are not referenced correctly for ffmpeg
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/.apt/usr/lib/x86_64-linux-gnu/pulseaudio/:/app/.apt/lib/x86_64-linux-gnu/
 EOF
 
     # Give environment variable to other buildpacks
     echo "export PLAYWRIGHT_BROWSERS_PATH=0" >> "$BP_DIR/export"
-
     export PLAYWRIGHT_BROWSERS_PATH=0
 }
 
