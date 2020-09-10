@@ -37,12 +37,6 @@ libxss1
 libasound2
 fonts-noto-color-emoji
 libgbm1
-# Recording
-ffmpeg
-# needed by ffmpeg
-libvpx5
-libpulse0
-libusb-1.0-0
 EOF
 	fi
 
@@ -62,6 +56,11 @@ EOF
 libnotify4
 libgdk-pixbuf2.0-0
 libcairo-gobject2
+# needed for CR recordings and FF video playback
+ffmpeg
+libvpx5
+libpulse0
+libusb-1.0-0
 EOF
 	fi
 
@@ -91,7 +90,7 @@ configure_export_env() {
     cat << EOF >$BUILD_DIR/.profile.d/001_playwright.sh
 export PLAYWRIGHT_BROWSERS_PATH=0
 # They are not referenced correctly for ffmpeg
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/app/.apt/usr/lib/x86_64-linux-gnu/pulseaudio/:/app/.apt/lib/x86_64-linux-gnu/
+export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/app/.apt/usr/lib/x86_64-linux-gnu/pulseaudio/:/app/.apt/lib/x86_64-linux-gnu/
 EOF
 
     # Give environment variable to other buildpacks
