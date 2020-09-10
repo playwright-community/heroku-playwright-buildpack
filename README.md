@@ -22,13 +22,13 @@ You should also install the browser specific NPM packages like `playwright-chrom
 
 ### Chromium
 
-For using Chromium, it's **necessary** to use `--no-sandbox` argument, since on Heroku is no support for the Chromium sandbox.
+For using Chromium, it's **necessary** to use `chromiumSandbox: false` in the launch options, since on Heroku is no support for the Chromium sandbox.
 
 ```javascript
 const { chromium } = require("playwright-chromium");
 
 (async () => {
-  const browser = await chromium.launch({ args: ["--no-sandbox"] });
+  const browser = await chromium.launch({ chromiumSandbox: false });
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto('http://whatsmyuseragent.org/');
