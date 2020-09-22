@@ -9,6 +9,12 @@ This buildpack installs all the needed dependencies to use Playwright with Chrom
 For using this buildpack, you have to add the buildpack **before** installing your Node.js dependencies.
 
 ```txt
+heroku buildpacks:set playwright-community/heroku-playwright-buildpack -a my-app
+```
+
+Or use the source code in this repository:
+
+```txt
 heroku buildpacks:set https://github.com/mxschmitt/heroku-playwright-buildpack -a my-app
 ```
 
