@@ -12,6 +12,7 @@ main() {
   compile_dir=$(mktmpdir)
   env_dir=$(mktmpdir)
   cp -a "$(pwd)"/* ${bp_dir}
+  export STACK="heroku-20"
   ${bp_dir}/bin/compile ${compile_dir} ${2:-$(mktmpdir)} $env_dir
 }
 
