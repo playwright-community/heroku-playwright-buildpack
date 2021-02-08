@@ -58,11 +58,25 @@ libgdk-pixbuf2.0-0
 libcairo-gobject2
 # needed for CR recordings and FF video playback
 ffmpeg
-libvpx5
 libpulse0
 libusb-1.0-0
 EOF
 	fi
+
+	case "$STACK" in
+	  "heroku-18")
+	    cat << EOF >>$build_tmpdir/Aptfile
+libvpx5
+EOF
+	    ;;
+	  "heroku-20")
+	    cat << EOF >>$build_tmpdir/Aptfile
+libvpx6
+EOF
+	    ;;
+	  *)
+	    error "STACK must be 'heroku-18' or 'heroku-20'"
+	esac
 
 	cat << EOF >>$build_tmpdir/Aptfile
 # (Optional) XVFB if there's a need to run browsers in headful mode
