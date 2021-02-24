@@ -37,6 +37,10 @@ libxss1
 libasound2
 fonts-noto-color-emoji
 libgbm1
+libatk-bridge2.0-0
+libxkbcommon0
+libxrandr2
+libatspi2.0-0
 EOF
 	fi
 
@@ -47,6 +51,9 @@ libdbus-glib-1-2
 libxt6
 libsm6
 libice6
+libx11-xcb1
+libxcursor1
+libxi6
 EOF
 	fi
 
@@ -57,6 +64,11 @@ libgdk-pixbuf2.0-0
 libcairo-gobject2
 libpulse0
 libusb-1.0-0
+libatk1.0-0
+libxcomposite1
+libxdamage1
+libxfixes3
+libgtk-3-0
 EOF
 	fi
 
