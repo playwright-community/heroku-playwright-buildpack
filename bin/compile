@@ -41,6 +41,7 @@ libatk-bridge2.0-0
 libxkbcommon0
 libxrandr2
 libatspi2.0-0
+libxshmfence
 EOF
 	fi
 
