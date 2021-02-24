@@ -53,11 +53,8 @@ EOF
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* || "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
 # Needed by Firefox and Chromium
-libnotify4
 libgdk-pixbuf2.0-0
 libcairo-gobject2
-# needed for CR recordings and FF video playback
-ffmpeg
 libpulse0
 libusb-1.0-0
 EOF
@@ -77,11 +74,6 @@ EOF
 	  *)
 	    error "STACK must be 'heroku-18' or 'heroku-20'"
 	esac
-
-	cat << EOF >>$build_tmpdir/Aptfile
-# (Optional) XVFB if there's a need to run browsers in headful mode
-xvfb
-EOF
 
 	local cache_tmpdir=$(mktemp -d)
 
