@@ -28,65 +28,35 @@ install_system_deps() {
 
 	SUPPORTED_BROWSERS=${PLAYWRIGHT_BUILDPACK_BROWSERS:-chromium,firefox,webkit}
 	echo "Installing Playwright dependencies (env: PLAYWRIGHT_BUILDPACK_BROWSERS) for $SUPPORTED_BROWSERS."
-
-	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
+	
 		cat << EOF >>$build_tmpdir/Aptfile
-# Chromium dependencies
-libnss3
-libxss1
 libasound2
-fonts-noto-color-emoji
-libgbm1
 libatk-bridge2.0-0
-libxkbcommon0
-libxrandr2
-libatspi2.0-0
-libxshmfence-dev
-EOF
-	fi
-
-	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
-		cat << EOF >>$build_tmpdir/Aptfile
-# Firefox dependencies
-libdbus-glib-1-2
-libxt6
-libsm6
-libice6
-libx11-xcb1
-libxcursor1
-libxi6
-EOF
-	fi
-
-	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* || "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
-		cat << EOF >>$build_tmpdir/Aptfile
-# Needed by Firefox and Chromium
-libgdk-pixbuf2.0-0
-libcairo-gobject2
-libpulse0
-libusb-1.0-0
 libatk1.0-0
+libatspi2.0-0
+libcairo2
+libcups2
+libdbus-1-3
+libdrm2
+libgbm1
+libglib2.0-0
+libnspr4
+libnss3
+libpango-1.0-0
+libx11-6
+libxcb1
 libxcomposite1
 libxdamage1
+libxext6
 libxfixes3
-libgtk-3-0
+libxkbcommon0
+libxrandr2
+libxshmfence1
+xvfb
+fonts-noto-color-emoji
+ttf-unifont
 EOF
 	fi
-
-	case "$STACK" in
-	  "heroku-18")
-	    cat << EOF >>$build_tmpdir/Aptfile
-libvpx5
-EOF
-	    ;;
-	  "heroku-20")
-	    cat << EOF >>$build_tmpdir/Aptfile
-libvpx6
-EOF
-	    ;;
-	  *)
-	    error "STACK must be 'heroku-18' or 'heroku-20'"
-	esac
 
 	local cache_tmpdir=$(mktemp -d)
 
