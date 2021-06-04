@@ -22,13 +22,13 @@ You should also install the browser specific NPM packages like `playwright-chrom
 
 ### Chromium
 
-For using Chromium, it's **necessary** to use `chromiumSandbox: false` in the launch options, since on Heroku is no support for the Chromium sandbox.
+For Chromium, you can refer to the official examples.
 
 ```javascript
 const { chromium } = require("playwright-chromium");
 
 (async () => {
-  const browser = await chromium.launch({ chromiumSandbox: false });
+  const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
   await page.goto('http://whatsmyuseragent.org/');
@@ -39,7 +39,7 @@ const { chromium } = require("playwright-chromium");
 
 ### Firefox
 
-For Firefox, you can refer to the official examples, no need to adjust any configurations.
+For Firefox, you can refer to the official examples.
 
 ```javascript
 const { firefox } = require("playwright-firefox");
