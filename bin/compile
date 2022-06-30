@@ -90,7 +90,7 @@ libvpx7
 EOF
 	    ;;
 	  *)
-	    error "STACK must be 'heroku-18', 'heroku-20', or 'heroku-22"
+	    error "STACK must be 'heroku-18', 'heroku-20', or 'heroku-22'"
 	esac
 
 	local cache_tmpdir=$(mktemp -d)
