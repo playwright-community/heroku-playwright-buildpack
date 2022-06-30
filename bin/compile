@@ -5,7 +5,11 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-BP_DIR=`cd $(dirname $0); cd ..; pwd`
+BP_DIR=$(
+	cd $(dirname $0)
+	cd ..
+	pwd
+)
 
 error() {
 	echo " !     $*" >&2
@@ -30,7 +34,7 @@ install_system_deps() {
 	echo "Installing Playwright dependencies (env: PLAYWRIGHT_BUILDPACK_BROWSERS) for $SUPPORTED_BROWSERS."
 
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
-		cat << EOF >>$build_tmpdir/Aptfile
+		cat <<EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
 libnss3
 libxss1
@@ -46,7 +50,7 @@ EOF
 	fi
 
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
-		cat << EOF >>$build_tmpdir/Aptfile
+		cat <<EOF >>$build_tmpdir/Aptfile
 # Firefox dependencies
 libdbus-glib-1-2
 libxt6
@@ -59,7 +63,7 @@ EOF
 	fi
 
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* || "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
-		cat << EOF >>$build_tmpdir/Aptfile
+		cat <<EOF >>$build_tmpdir/Aptfile
 # Needed by Firefox and Chromium
 libgdk-pixbuf2.0-0
 libcairo-gobject2
@@ -74,18 +78,24 @@ EOF
 	fi
 
 	case "$STACK" in
-	  "heroku-20")
-	    cat << EOF >>$build_tmpdir/Aptfile
+	"heroku-18")
+		cat <<EOF >>$build_tmpdir/Aptfile
+libvpx5
+EOF
+		;;
+	"heroku-20")
+		cat <<EOF >>$build_tmpdir/Aptfile
 libvpx6
 EOF
-	    ;;
-	  "heroku-22")
-	    cat << EOF >>$build_tmpdir/Aptfile
+		;;
+	"heroku-22")
+		cat <<EOF >>$build_tmpdir/Aptfile
 libvpx7
 EOF
-	    ;;
-	  *)
-	    error "STACK must be 'heroku-20' or 'heroku-22'"
+		;;
+	*)
+		error "STACK must be 'heroku-18', 'heroku-20', or 'heroku-22'"
+		;;
 	esac
 
 	local cache_tmpdir=$(mktemp -d)
@@ -104,31 +114,31 @@ EOF
 }
 
 configure_export_env() {
-    topic "Writing profile script"
-    mkdir -p $BUILD_DIR/.profile.d
-    cat << EOF >$BUILD_DIR/.profile.d/001_playwright.sh
+	topic "Writing profile script"
+	mkdir -p $BUILD_DIR/.profile.d
+	cat <<EOF >$BUILD_DIR/.profile.d/001_playwright.sh
 export PLAYWRIGHT_BROWSERS_PATH=0
 # They are not referenced correctly for ffmpeg
 export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/app/.apt/usr/lib/x86_64-linux-gnu/pulseaudio/:/app/.apt/lib/x86_64-linux-gnu/
 EOF
 
-    # Give environment variable to other buildpacks
-    echo "export PLAYWRIGHT_BROWSERS_PATH=0" >> "$BP_DIR/export"
-    export PLAYWRIGHT_BROWSERS_PATH=0
+	# Give environment variable to other buildpacks
+	echo "export PLAYWRIGHT_BROWSERS_PATH=0" >>"$BP_DIR/export"
+	export PLAYWRIGHT_BROWSERS_PATH=0
 }
 
 # See here as a reference: https://devcenter.heroku.com/articles/buildpack-api#bin-compile
 export_env_dir() {
-  env_dir=$1
-  acceptlist_regex=${2:-''}
-  denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
-  if [ -d "$env_dir" ]; then
-    for e in $(ls $env_dir); do
-      echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" &&
-      export "$e=$(cat $env_dir/$e)"
-      :
-    done
-  fi
+	env_dir=$1
+	acceptlist_regex=${2:-''}
+	denylist_regex=${3:-'^(PATH|GIT_DIR|CPATH|CPPATH|LD_PRELOAD|LIBRARY_PATH)$'}
+	if [ -d "$env_dir" ]; then
+		for e in $(ls $env_dir); do
+			echo "$e" | grep -E "$acceptlist_regex" | grep -qvE "$denylist_regex" &&
+				export "$e=$(cat $env_dir/$e)"
+			:
+		done
+	fi
 }
 
 export_env_dir "$ENV_DIR" PLAYWRIGHT_BUILDPACK_BROWSERS

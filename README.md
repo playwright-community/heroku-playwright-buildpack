@@ -57,3 +57,19 @@ const { firefox } = require("playwright-firefox");
 ## Best practises
 
 It's common to only install the [browser-specific NPM packages](https://playwright.dev/#version=v1.1.1&path=docs%2Finstallation.md&q=download-single-browser-binary), which will reduce installation time and slug size on Heroku in the end, that should fix also the error that the slug size is too large.
+
+Versions of `playwright-chromium@>1.15.0` take a new dependency on `playwright-core`, which does not play well with this buildpack, causing exceptions that look like
+
+```
+browserType.launch: Executable doesn't exist at /app/node_modules/playwright-core/.local-browsers/chromium-1012/chrome-linux/chrome
+╔═════════════════════════════════════════════════════════════════════════╗
+║ Looks like Playwright Test or Playwright was just installed or updated. ║
+║ Please run the following command to download new browsers:              ║
+║                                                                         ║
+║     npx playwright install                                              ║
+║                                                                         ║
+║ <3 Playwright Team                                                      ║
+╚═════════════════════════════════════════════════════════════════════════╝
+```
+
+Consider hardcoding `playwright-chromium@1.15.0` to fix this issue.
