@@ -76,12 +76,12 @@ EOF
 	case "$STACK" in
 	  "heroku-20")
 	    cat << EOF >>$build_tmpdir/Aptfile
-libvpx5
+libvpx6
 EOF
 	    ;;
 	  "heroku-22")
 	    cat << EOF >>$build_tmpdir/Aptfile
-libvpx6
+libvpx7
 EOF
 	    ;;
 	  *)
