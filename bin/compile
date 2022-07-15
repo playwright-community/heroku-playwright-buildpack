@@ -84,8 +84,13 @@ EOF
 libvpx6
 EOF
 	    ;;
+	  "heroku-22")
+	    cat << EOF >>$build_tmpdir/Aptfile
+libvpx6
+EOF
+	    ;;
 	  *)
-	    error "STACK must be 'heroku-18' or 'heroku-20'"
+	    error "STACK must be 'heroku-18' or 'heroku-20' or 'heroku-22'"
 	esac
 
 	local cache_tmpdir=$(mktemp -d)
