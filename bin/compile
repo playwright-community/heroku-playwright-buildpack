@@ -32,6 +32,7 @@ install_system_deps() {
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
+libnspr4
 libnss3
 libxss1
 libasound2
