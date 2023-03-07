@@ -32,6 +32,7 @@ install_system_deps() {
 	if [[ "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
 # Chromium dependencies
+libnspr4
 libnss3
 libxss1
 libasound2
@@ -84,8 +85,13 @@ EOF
 libvpx6
 EOF
 	    ;;
+		"heroku-22")
+	    cat << EOF >>$build_tmpdir/Aptfile
+libvpx7
+EOF
+	    ;;
 	  *)
-	    error "STACK must be 'heroku-18' or 'heroku-20'"
+	    error "STACK must be 'heroku-18', 'heroku-20', or 'heroku-22'"
 	esac
 
 	local cache_tmpdir=$(mktemp -d)
