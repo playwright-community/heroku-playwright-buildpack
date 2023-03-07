@@ -31,7 +31,7 @@ const { chromium } = require("playwright-chromium");
   const browser = await chromium.launch({ chromiumSandbox: false });
   const context = await browser.newContext();
   const page = await context.newPage();
-  await page.goto('http://whatsmyuseragent.org/');
+  await page.goto("http://whatsmyuseragent.org/");
   await page.screenshot({ path: `chromium.png` });
   await browser.close();
 })();
@@ -48,7 +48,7 @@ const { firefox } = require("playwright-firefox");
   const browser = await chromium.launch();
   const context = await browser.newContext();
   const page = await context.newPage();
-  await page.goto('http://whatsmyuseragent.org/');
+  await page.goto("http://whatsmyuseragent.org/");
   await page.screenshot({ path: `firefox.png` });
   await browser.close();
 })();
@@ -58,7 +58,7 @@ const { firefox } = require("playwright-firefox");
 
 It's common to only install the [browser-specific NPM packages](https://playwright.dev/#version=v1.1.1&path=docs%2Finstallation.md&q=download-single-browser-binary), which will reduce installation time and slug size on Heroku in the end, that should fix also the error that the slug size is too large.
 
-Versions of `playwright-chromium@>1.15.0` take a new dependency on `playwright-core`, which does not play well with this buildpack, causing exceptions that look like
+If you encounter this error at runtime, it means that you are missing the chromium binary, which can be installed with `playwright install chromium`.
 
 ```
 browserType.launch: Executable doesn't exist at /app/node_modules/playwright-core/.local-browsers/chromium-1012/chrome-linux/chrome
@@ -72,4 +72,10 @@ browserType.launch: Executable doesn't exist at /app/node_modules/playwright-cor
 ╚═════════════════════════════════════════════════════════════════════════╝
 ```
 
-Consider hardcoding `playwright-chromium@1.15.0` to fix this issue.
+You can incorporate this into Heroku's build step by including this script in `package.json`.
+
+```
+"scripts": {
+  "heroku-cleanup": "yarn run playwright install [chromium | webkit | firefox]"
+}
+```
