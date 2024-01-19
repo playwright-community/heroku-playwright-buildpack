@@ -35,7 +35,6 @@ install_system_deps() {
 libnspr4
 libnss3
 libxss1
-libasound2
 fonts-noto-color-emoji
 libgbm1
 libatk-bridge2.0-0
@@ -62,6 +61,7 @@ EOF
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* || "$SUPPORTED_BROWSERS" == *"chromium"* ]]; then
 		cat << EOF >>$build_tmpdir/Aptfile
 # Needed by Firefox and Chromium
+libasound2
 libgdk-pixbuf2.0-0
 libcairo-gobject2
 libpulse0
