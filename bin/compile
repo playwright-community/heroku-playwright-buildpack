@@ -35,7 +35,6 @@ install_system_deps() {
 libnspr4
 libnss3
 libxss1
-libasound2
 fonts-noto-color-emoji
 libgbm1
 libatk-bridge2.0-0
@@ -44,6 +43,17 @@ libxrandr2
 libatspi2.0-0
 libxshmfence-dev
 EOF
+
+		# If stack is heroku-24, install libasound2t64
+		if [[ "$STACK" == "heroku-24" ]]; then
+			cat << EOF >>$build_tmpdir/Aptfile
+libasound2t64
+EOF
+		else
+			cat << EOF >>$build_tmpdir/Aptfile
+libasound2
+EOF
+		fi
 	fi
 
 	if [[ "$SUPPORTED_BROWSERS" == *"firefox"* ]]; then
@@ -90,8 +100,14 @@ EOF
 libvpx7
 EOF
 	    ;;
+		"heroku-24")
+	    cat << EOF >>$build_tmpdir/Aptfile
+libvpx9
+EOF
+	    ;;
 	  *)
-	    error "STACK must be 'heroku-18', 'heroku-20', or 'heroku-22'"
+	    error "STACK must be 'heroku-18', 'heroku-20', 'heroku-22', or 'heroku-24'"
+
 	esac
 
 	local cache_tmpdir=$(mktemp -d)
